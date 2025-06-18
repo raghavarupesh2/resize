@@ -2,13 +2,14 @@ name: Scheduled Azure VM Resize
 
 on:
   schedule:
-    - cron: '25 18 * * *'   # up_cron: resize up
-    - cron: '35 18 * * *'  # down_cron: resize down
-  workflow_dispatch:
+    - cron: '42 18 * * *'   # up_cron: resize up (e.g., change VM size to Standard_D4s_v3)
+    - cron: '55 18 * * *'  # down_cron: resize down
 jobs:
   resize-vm:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        resize_action: [up, down]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,14 +20,17 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
+      - name: Set up Python virtual environment and install dependencies
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install pyyaml
       - name: Install Python dependencies
         run: pip install pyyaml
 
       - name: Decide resize action and update tfvars
         env:
-          SCHEDULE_CRON: ${{ github.event.schedule }}
+          RESIZE_ACTION: ${{ matrix.resize_action }}
         run: python resize.py
       - name: Terraform Init
         run: terraform init
