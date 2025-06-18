@@ -2,8 +2,8 @@ name: Scheduled Azure VM Resize
 
 on:
   schedule:
-    - cron: '42 17 * * *'   # up_cron: resize up
-    - cron: '55 17 * * *'  # down_cron: resize down
+    - cron: '15 18 * * *'   # up_cron: resize up
+    - cron: '25 18 * * *'  # down_cron: resize down
 
 jobs:
   resize-vm:
@@ -26,41 +26,8 @@ jobs:
 
       - name: Decide resize action and update tfvars
         env:
-          GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
-        run: |
-          import os, yaml, json
-
-          # Load schedule
-          with open('resize_schedule.yaml', 'r') as f:
-              schedule = yaml.safe_load(f)
-
-          # Get the VM entry
-          vm = schedule['vms']['linuxvm']
-
-          # Get the current cron string (from the workflow trigger)
-          current_cron = os.environ.get('GITHUB_EVENT_SCHEDULE', '')
-
-          # Determine which size to set
-          if current_cron == vm['up_cron']:
-              vm_size = vm['new_size']
-              print(f"Resizing VM to new_size: {vm_size}")
-          elif current_cron == vm['down_cron']:
-              vm_size = vm['old_size']
-              print(f"Resizing VM to old_size: {vm_size}")
-          else:
-              print("No matching cron; exiting.")
-              exit(0)
-
-          # Write the size to terraform.auto.tfvars.json
-          tfvars = {}
-          tfvars_file = 'terraform.auto.tfvars.json'
-          if os.path.exists(tfvars_file):
-              with open(tfvars_file, 'r') as f:
-                  tfvars = json.load(f)
-          tfvars['vm_size'] = vm_size
-          with open(tfvars_file, 'w') as f:
-              json.dump(tfvars, f)
-          EOF
+          SCHEDULE_CRON: ${{ github.event.schedule }}
+        run: python resize.py
       - name: Terraform Init
         run: terraform init
 
