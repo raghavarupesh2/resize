@@ -60,7 +60,7 @@ jobs:
           tfvars['vm_size'] = vm_size
           with open(tfvars_file, 'w') as f:
               json.dump(tfvars, f)
-
+          EOF
       - name: Terraform Init
         run: terraform init
 
