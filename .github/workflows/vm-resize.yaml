@@ -1,0 +1,73 @@
+name: Scheduled Azure VM Resize
+
+on:
+  schedule:
+    - cron: '04 17 * * *'   # up_cron: resize up
+    - cron: '24 17 * * *'  # down_cron: resize down
+
+jobs:
+  resize-vm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Decide resize action and update tfvars
+        env:
+          GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          import os, yaml, json
+
+          # Load schedule
+          with open('resize_schedule.yaml', 'r') as f:
+              schedule = yaml.safe_load(f)
+
+          # Get the VM entry
+          vm = schedule['vms']['linuxvm']
+
+          # Get the current cron string (from the workflow trigger)
+          current_cron = os.environ.get('GITHUB_EVENT_SCHEDULE', '')
+
+          # Determine which size to set
+          if current_cron == vm['up_cron']:
+              vm_size = vm['new_size']
+              print(f"Resizing VM to new_size: {vm_size}")
+          elif current_cron == vm['down_cron']:
+              vm_size = vm['old_size']
+              print(f"Resizing VM to old_size: {vm_size}")
+          else:
+              print("No matching cron; exiting.")
+              exit(0)
+
+          # Write the size to terraform.auto.tfvars.json
+          tfvars = {}
+          tfvars_file = 'terraform.auto.tfvars.json'
+          if os.path.exists(tfvars_file):
+              with open(tfvars_file, 'r') as f:
+                  tfvars = json.load(f)
+          tfvars['vm_size'] = vm_size
+          with open(tfvars_file, 'w') as f:
+              json.dump(tfvars, f)
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}

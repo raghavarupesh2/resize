@@ -1,0 +1,41 @@
+# This file is maintained automatically by "terraform init".
+# Manual edits may be lost in future updates.
+
+provider "registry.terraform.io/hashicorp/azurerm" {
+  version     = "4.33.0"
+  constraints = ">= 3.0.0"
+  hashes = [
+    "h1:q4hgd9x7cfk4LciehBds0OA7A6dAv4ODoLAA2ZcuAKE=",
+    "zh:1f61ce7671de78f09a8e7532bfe1366eff6e6af47050de0a06217162638b11a0",
+    "zh:20f103ad60399090c219685ef71d29713f46aba32499c02cc640508f8821b067",
+    "zh:22ce8ad46b32be74d7bd13c982f30e5ffc0749a42191de468309d4ca1ee427f2",
+    "zh:23ec8730b2f22701dbef4fd72459b95800bd4f87dfd517898064e291b807af20",
+    "zh:273202db879542def36a057072ef1b87aa0f1ccced81029c8ede55508d16080e",
+    "zh:2c5bc87083e7ddf55e49e3159a4836353a24a01288f78a846399453d33375938",
+    "zh:5dcae547287b377bc4c8e472e313d2178821264ac00cbf4fc6469dffb27a79cd",
+    "zh:6601669c92bea9b7c6fc7e1e20a957389e5d7c02d06cd2dcda44c6ef62f3d7df",
+    "zh:8b91e6153a586be514680c90b0d1a4aee7556a39376100e73dde8e9452537671",
+    "zh:9b6742b8b4a7bc4efa62794bd3425e39166dd3ac53fbdd8efb3214d79f36ffab",
+    "zh:f569b65999264a9416862bca5cd2a6177d94ccb0424f3a4ef424428912b9cb3c",
+    "zh:f664e54e87c9466d54adc1f0dff41d8cca8d623aca317ff38aab29522b0d2508",
+  ]
+}
+
+provider "registry.terraform.io/hashicorp/external" {
+  version = "2.3.5"
+  hashes = [
+    "h1:ORX3G4aEHO9sFP3dyv821JJTF9qa8J9XVp441SvvjvA=",
+    "zh:6e89509d056091266532fa64de8c06950010498adf9070bf6ff85bc485a82562",
+    "zh:78d5eefdd9e494defcb3c68d282b8f96630502cac21d1ea161f53cfe9bb483b3",
+    "zh:86868aec05b58dc0aa1904646a2c26b9367d69b890c9ad70c33c0d3aa7b1485a",
+    "zh:a2ce38fda83a62fa5fb5a70e6ca8453b168575feb3459fa39803f6f40bd42154",
+    "zh:a6c72798f4a9a36d1d1433c0372006cc9b904e8cfd60a2ae03ac5b7d2abd2398",
+    "zh:a8a3141d2fc71c86bf7f3c13b0b3be8a1b0f0144a47572a15af4dfafc051e28a",
+    "zh:aa20a1242eb97445ad26ebcfb9babf2cd675bdb81cac5f989268ebefa4ef278c",
+    "zh:b58a22445fb8804e933dcf835ab06c29a0f33148dce61316814783ee7f4e4332",
+    "zh:cb5626a661ee761e0576defb2a2d75230a3244799d380864f3089c66e99d0dcc",
+    "zh:d1acb00d20445f682c4e705c965e5220530209c95609194c2dc39324f3d4fcce",
+    "zh:d91a254ba77b69a29d8eae8ed0e9367cbf0ea6ac1a85b58e190f8cb096a40871",
+    "zh:f6592327673c9f85cdb6f20336faef240abae7621b834f189c4a62276ea5db41",
+  ]
+}
