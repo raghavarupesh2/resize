@@ -2,9 +2,9 @@ name: Scheduled Azure VM Resize
 
 on:
   schedule:
-    - cron: '15 18 * * *'   # up_cron: resize up
-    - cron: '25 18 * * *'  # down_cron: resize down
-
+    - cron: '25 18 * * *'   # up_cron: resize up
+    - cron: '35 18 * * *'  # down_cron: resize down
+  workflow_dispatch:
 jobs:
   resize-vm:
     runs-on: ubuntu-latest
