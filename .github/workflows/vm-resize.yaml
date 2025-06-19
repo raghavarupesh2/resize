@@ -2,12 +2,12 @@ name: Scheduled Azure VM Resize
 
 on:
   schedule:
-    - cron: '45 15 * * *'   # up_cron: resize up (e.g., change VM size to Standard_D4s_v3)
-    - cron: '59 15 * * *'   # down_cron: resize down
+    - cron: '15 17 * * *'   # up_cron: resize up (e.g., change VM size to Standard_D4s_v3)
+    - cron: '25 17 * * *'   # down_cron: resize down
 
 jobs:
   resize-vm-up:
-    if: github.event.schedule == '40 15 * * *'
+    if: github.event.schedule == '15 17 * * *'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -44,7 +44,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
   resize-vm-down:
-    if: github.event.schedule == '55 15 * * *'
+    if: github.event.schedule == '25 17 * * *'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
