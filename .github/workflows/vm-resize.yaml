@@ -20,6 +20,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Set up Python virtual environment and install dependencies
         run: |
           python3 -m venv venv
