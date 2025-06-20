@@ -7,7 +7,7 @@ on:
 
 jobs:
   resize-vm-up:
-    if: github.event.schedule == '15 5 * * *'
+    if: github.event_name == 'schedule' && contains(join(github.event.schedule, ','), '15 5 * * *')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,11 +21,28 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Cache Python virtual environment
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
+
       - name: Set up Python virtual environment and install dependencies
         run: |
           python3 -m venv venv
           source venv/bin/activate
-          pip install pyyaml
+          pip install -r requirements.txt
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+      # resize.py expects RESIZE_ACTION to be set to 'up' or 'down' to determine the resize direction
+      - name: Decide resize action and update tfvars (up)
+        env:
+          RESIZE_ACTION: up
+        run: python resize.py
+        run: pip install pyyaml
 
       - name: Decide resize action and update tfvars (up)
         env:
@@ -44,9 +61,17 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
   resize-vm-down:
-    if: github.event.schedule == '30 5 * * *'
+    if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
+      - name: Check if this is the down_cron schedule
+        id: check_cron
+        run: |
+          if [[ "${{ github.event.schedule }}" != "30 5 * * *" ]]; then
+            echo "Not the down_cron schedule, skipping job."
+            exit 78
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -58,10 +83,11 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set up Python virtual environment and install dependencies
-        run: |
-          python3 -m venv venv
-          source venv/bin/activate
+      # resize.py expects RESIZE_ACTION to be set to 'up' or 'down' to determine the resize direction
+      - name: Decide resize action and update tfvars (down)
+        env:
+          RESIZE_ACTION: down
+        run: python resize.py
           pip install pyyaml
 
       - name: Decide resize action and update tfvars (down)
