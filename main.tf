@@ -5,7 +5,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
   computer_name                   = var.vm_name
   size                            = local.adjusted_value
   disable_password_authentication = true
-  license_type                    = "RHEL_BYOS"
   patch_mode                      = "ImageDefault"
   allow_extension_operations      = true
   disk_controller_type            = "NVMe"
