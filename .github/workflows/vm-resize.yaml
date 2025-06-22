@@ -2,16 +2,29 @@ name: Scheduled Azure VM Resize
 
 on:
   schedule:
-    - cron: '20 10 * * *'   # up_cron: resize up (e.g., change VM size to Standard_D4s_v3)
-    - cron: '40 10 * * *'   # down_cron: resize down
+    - cron: '58 11 * * *'   # Upsize: e.g., 10:20 UTC daily
+    - cron: '10 12 * * *'   # Downsize: e.g., 10:40 UTC daily
 
 jobs:
-  resize-vm-up:
-    if: github.event_name == 'schedule' && contains(join(github.event.schedule, ','), '20 10 * * *')
+  resize-vm:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Set GITHUB_EVENT_SCHEDULE env var
+        run: echo "GITHUB_EVENT_SCHEDULE=${{ github.event.schedule }}" >> $GITHUB_ENV
+
+      - name: Decide resize action and update tfvars
+        run: python resize.py
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
@@ -20,52 +33,6 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Setup Python venv and install dependencies
-        uses: ./.github/actions/setup-python-venv
-
-      - name: Decide resize action and update tfvars (up)
-        env:
-          RESIZE_ACTION: up
-        run: |
-          pip install pyyaml
-          python resize.py
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
-  resize-vm-down:
-    if: github.event_name == 'schedule' && contains(join(github.event.schedule, ','), '40 10 * * *')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Setup Python venv and install dependencies
-        uses: ./.github/actions/setup-python-venv
-
-      - name: Decide resize action and update tfvars (down)
-        env:
-          RESIZE_ACTION: down
-        run: |
-          pip install pyyaml
-          python resize.py
 
       - name: Terraform Init
         run: terraform init
