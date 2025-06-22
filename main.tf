@@ -3,7 +3,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   resource_group_name             = var.resource_group_name
   location                        = var.location
   computer_name                   = var.vm_name
-  size                            = local.adjusted_value
+  size                            = var.vm_size
   disable_password_authentication = true
   patch_mode                      = "ImageDefault"
   allow_extension_operations      = true

@@ -88,6 +88,6 @@ variable "business_hour_end" {
   default     = 18
 }
 
-locals {
-  adjusted_value = local.hour >= var.business_hour_start && local.hour <= var.business_hour_end ? "Standard_D2ads_v6" : "Standard_D2as_v6"
-}
+#locals {
+#  adjusted_value = local.hour >= var.business_hour_start && local.hour <= var.business_hour_end ? "Standard_D2ads_v6" : "Standard_D2as_v6"
+#}
