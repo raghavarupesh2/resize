@@ -2,8 +2,8 @@ name: Scheduled Azure VM Resize
 
 on:
   schedule:
-    - cron: '42 16 * * *'   # Upsize: e.g., 10:20 UTC daily
-    - cron: '55 16 * * *'   # Downsize: e.g., 10:40 UTC daily
+    - cron: '25 6 * * *'   # Upsize: e.g., 10:20 UTC daily
+    - cron: '55 6 * * *'   # Downsize: e.g., 10:40 UTC daily
 
 jobs:
   resize-vm:
