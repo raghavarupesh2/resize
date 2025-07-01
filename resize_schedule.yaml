@@ -1,7 +1,7 @@
 vms:
   linuxvm:
-    up_cron:   '55 00 * * *'   # Friday 9pm PST (Saturday 5am UTC)
-    down_cron: '27 02 * * *'
+    up_cron:   '27 14 * * *'   # Friday 9pm PST (Saturday 5am UTC)
+    down_cron: '27 17 * * *'
     #'30 2 * * 1'   # Monday 8am IST (Monday 2:30am UTC)
     old_size: Standard_D2ads_v6
     new_size: Standard_D2as_v6
