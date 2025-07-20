@@ -1,10 +1,10 @@
 name: Scheduled Azure VM Resize
-
+/*
 on:
   schedule:
-    - cron: '27 14 * * *'   # Upsize: e.g., 10:20 UTC daily
-    - cron: '27 17 * * *'   # Downsize: e.g., 10:40 UTC daily
-
+    - cron: '* * * * *'   # Upsize: e.g., 10:20 UTC daily
+    - cron: '* * * * *'   # Downsize: e.g., 10:40 UTC daily
+*/
 jobs:
   resize-vm:
     runs-on: ubuntu-latest
